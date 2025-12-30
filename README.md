@@ -238,15 +238,7 @@ Benefiting from expanded samples and comment data, CPCLDetector maintains strong
 
 ## References (example bib entry)
 
-If citing the paper, use an appropriate bib entry (add the actual bib data to your bibliography file):
 
-```bibtex
-@misc{yang2025cpcldetectorknowledgeenhancementalignment,
-      title={CPCLDETECTOR: Knowledge Enhancement and Alignment Selection for Chinese Patronizing and Condescending Language Detection}, 
-      author={Jiaxun Yang and Yifei Han and Long Zhang and Yujie Liu and Bin Li and Bo Gao and Yangfan He and Kejia Zhan},
-      year={2025},
-      eprint={2509.18562},
-      archivePrefix={arXiv},
       primaryClass={cs.MM},
       url={https://arxiv.org/abs/2509.18562}, 
 }
