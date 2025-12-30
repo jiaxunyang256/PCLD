@@ -236,12 +236,7 @@ Benefiting from expanded samples and comment data, CPCLDetector maintains strong
 
 
 
-## References (example bib entry)
 
-
-      primaryClass={cs.MM},
-      url={https://arxiv.org/abs/2509.18562}, 
-}
 ```
 
 ---
