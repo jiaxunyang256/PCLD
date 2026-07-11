@@ -1,0 +1,10 @@
+{
+  "dataset": "PCLMMPLUS",
+  "split": {"train": 600, "dev": 66, "test": 165},
+  "seeds": [13, 21, 42, 87, 100],
+  "primary_metric": "macro_f1",
+  "final_model": "Full+Qwen-SKG",
+  "mean": {"accuracy": 0.8618, "macro_f1": 0.8497, "recall": 0.7869, "precision": 0.8353, "auc": 0.9296, "pr_auc": 0.8922},
+  "std": {"accuracy": 0.0027, "macro_f1": 0.0053, "recall": 0.0602, "precision": 0.0475, "auc": 0.0087, "pr_auc": 0.0115},
+  "note": "Five-seed same-split supervised results reported in Table 4 of the paper."
+}

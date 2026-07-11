@@ -1,242 +1,158 @@
-# CPCLDetector
+# PCLD
 
-**CPCLDetector: Knowledge Enhancement and Alignment Selection for Chinese Patronizing and Condescending Language Detection**
+Official implementation for **Text-Centric Multimodal Context Modeling for
+Chinese Patronizing and Condescending Language Detection**.
 
----
+PCLD treats the ASR transcript as the primary decision signal. Top-level user
+comments provide noisy post-publication social feedback, while visual,
+acoustic, facial and Qwen-SKG representations are auxiliary evidence projected
+into a shared textual space. On PCLMMPLUS, the final Full+Qwen-SKG model obtains
+**0.8497 Macro-F1** and **0.9296 AUC** (five-seed mean).
 
-## Overview
+## Highlights
 
-CPCL refers to implicitly toxic speech targeting vulnerable groups on Chinese video platforms (e.g., Douyin, Bilibili). Unlike explicit hate speech, it conveys "superiority" through hypocritical/condescending attitudes, making detection challenging.
+- PCLMMPLUS contains 831 videos: 313 CPCL and 518 non-CPCL samples.
+- The fixed video-level split is 600/66/165 for train/dev/test.
+- All comments and feature streams stay with their source video to prevent
+  cross-split leakage.
+- Training uses label-free, offline Qwen3-Embedding-0.6B semantic caches.
+- Raw videos, identifiers, comments, features and checkpoints are excluded from
+  Git by default.
 
-**Core components**
+## Repository layout
 
-* Alignment Selection Module: Unifies spatiotemporal dimensions of multi-source features (video, facial expression, audio, text) and reduces cross-modal distribution differences.
-* Alignment Selection Module: Unifies spatiotemporal dimensions of multi-source features (video, facial expression, audio, text) and reduces cross-modal distribution differences.
-
-
-**Key contributions**
-
-* Constructed PCLMMPLUS, a expanded multi-modal dataset with 831 video samples and 103k user comments, filling the comment modality blank.
-* Proposed CPCLDetector, which outperforms state-of-the-art (SOTA) models on both the original PCLMM dataset and the new PCLMMPLUS dataset.
-* Verified the synergistic value of alignment selection and knowledge-enhanced comment modules via ablation experiments, with significant improvements in recall (critical for capturing implicit CPCL).
-
----
-
-## Datasets
-
-**Dataset Comparison**
-
-<table width="560" border="0" cellpadding="0" cellspacing="0" style='width:336.00pt;border-collapse:collapse;table-layout:fixed;'>
-   <col width="80" span="7" style='width:48.00pt;'/>
-   <tr height="125.00" style='height:75.00pt;'>
-    <td class="xl65" height="125.00" width="80" style='height:75.00pt;width:48.00pt;' x:str>Statistics</td>
-    <td class="xl66" width="240" colspan="3" style='width:144.00pt;border-right:none;border-bottom:none;' x:str>PCLMM (Prior)</td>
-    <td class="xl66" width="240" colspan="3" style='width:144.00pt;border-right:none;border-bottom:none;' x:str>PCLMMPLUS (Ours)</td>
-   </tr>
-   <tr height="50" style='height:30.00pt;'>
-    <td class="xl67" height="50" style='height:30.00pt;'></td>
-    <td class="xl68" x:str>Non-PCL</td>
-    <td class="xl68" x:str>PCL</td>
-    <td class="xl68" x:str>Total</td>
-    <td class="xl68" x:str>Non-PCL</td>
-    <td class="xl68" x:str>PCL</td>
-    <td class="xl68" x:str>Total</td>
-   </tr>
-   <tr height="75" style='height:45.00pt;'>
-    <td class="xl67" height="75" style='height:45.00pt;' x:str>Videos Total Num</td>
-    <td class="xl68" x:num>519</td>
-    <td class="xl68" x:num>196</td>
-    <td class="xl68" x:num>715</td>
-    <td class="xl68" x:num>519</td>
-    <td class="xl68" x:num>312</td>
-    <td class="xl68" x:num>831</td>
-   </tr>
-   <tr height="100" style='height:60.00pt;'>
-    <td class="xl67" height="100" style='height:60.00pt;' x:str>Videos Total Length (hrs)</td>
-    <td class="xl68" x:num>15.1</td>
-    <td class="xl68" x:num>6.5</td>
-    <td class="xl68" x:num>21.6</td>
-    <td class="xl68" x:num>15.1</td>
-    <td class="xl68" x:num>11.9</td>
-    <td class="xl68" x:num>27</td>
-   </tr>
-   <tr height="100" style='height:60.00pt;'>
-    <td class="xl67" height="100" style='height:60.00pt;' x:str>Comments Total Num</td>
-    <td class="xl68" x:str>-</td>
-    <td class="xl68" x:str>-</td>
-    <td class="xl68" x:str>-</td>
-    <td class="xl68" x:str>77K</td>
-    <td class="xl68" x:str>26K</td>
-    <td class="xl68" x:str>103K</td>
-   </tr>
-   <tr height="125.00" style='height:75.00pt;'>
-    <td class="xl67" height="125.00" style='height:75.00pt;' x:str>Comments Total Length (chars)</td>
-    <td class="xl68" x:str>-</td>
-    <td class="xl68" x:str>-</td>
-    <td class="xl68" x:str>-</td>
-    <td class="xl68" x:str>2935K</td>
-    <td class="xl68" x:str>992K</td>
-    <td class="xl68" x:str>3927K</td>
-   </tr>
-   <![if supportMisalignedColumns]>
-    <tr width="0" style='display:none;'/>
-   <![endif]>
-  </table>
-
-**Dataset Comparison**
-
-* PCLMM Dataset:
-
-    **1.** The first multi-modal CPCL dataset for Chinese videos, targeting 6 vulnerable groups from Bilibili.
-    
-    **2.** Contains 715 annotated samples (196 PCL, 519 Non-PCL), but lacks comment data and has imbalanced PCL samples.
-
-* PCLMMPLUS Dataset:
-
-    **1.** Inherits PCLMM’s core design, adds 116 new PCL video samples (total 312 PCL samples) with 5.4 additional hours of content.
-    
-    **2.** Includes 103k cleaned first-level user comments (via platform-compliant interfaces).
-
-    **3** Provides more comprehensive context for CPCL detection and alleviates sample imbalance.
----
-
-## Model Architecture
-**Alignment Selection Module**
-
-* Unifies feature dimensions across modalities and aligns them to text (as the anchor) for efficient fusion. 
-
-**Knowledge-Enhanced Comment Content Module**
-
-* Knowledge-Enhanced Sentiment Analysis
-* Comment Information Processing
----
-
-## Experimental Results
-
-### Performance on PCLMM Dataset (SOTA Comparison)
-
-  <table width="650" border="0" cellpadding="0" cellspacing="0" style='width:390.00pt;border-collapse:collapse;table-layout:fixed;'>
-   <col width="208" style='mso-width-source:userset;mso-width-alt:6085;'/>
-   <col width="108.00" style='mso-width-source:userset;mso-width-alt:3159;'/>
-   <col width="125.00" style='mso-width-source:userset;mso-width-alt:3657;'/>
-   <col width="102.00" style='mso-width-source:userset;mso-width-alt:2984;'/>
-   <col width="107" style='mso-width-source:userset;mso-width-alt:3130;'/>
-   <tr height="25" style='height:15.00pt;'>
-    <td class="xl65" height="25" width="208" style='height:15.00pt;width:124.80pt;' x:str>Model</td>
-    <td class="xl66" width="108.00" style='width:64.80pt;' x:str>Accuracy</td>
-    <td class="xl66" width="125.00" style='width:75.00pt;' x:str>F1 (macro)</td>
-    <td class="xl66" width="102.00" style='width:61.20pt;' x:str>Recall</td>
-    <td class="xl66" width="107" style='width:64.20pt;' x:str>Precision</td>
-   </tr>
-   <tr height="25" style='height:15.00pt;'>
-    <td class="xl67" height="25" style='height:15.00pt;' x:str>BERT-PCL</td>
-    <td class="xl66" x:num>0.7972</td>
-    <td class="xl66" x:num>0.7113</td>
-    <td class="xl66" x:num>0.5294</td>
-    <td class="xl66" x:num>0.5806</td>
-   </tr>
-   <tr height="25" style='height:15.00pt;'>
-    <td class="xl67" height="25" style='height:15.00pt;' x:str>GPT4</td>
-    <td class="xl66" x:num>0.8252</td>
-    <td class="xl66" x:num>0.7455</td>
-    <td class="xl66" x:num>0.5588</td>
-    <td class="xl66" x:num>0.6552</td>
-   </tr>
-   <tr height="25" style='height:15.00pt;'>
-    <td class="xl67" height="25" style='height:15.00pt;' x:str>VideoMAE</td>
-    <td class="xl66" x:num>0.7778</td>
-    <td class="xl66" x:num>0.709</td>
-    <td class="xl66" x:num>0.525</td>
-    <td class="xl66" x:num>0.6176</td>
-   </tr>
-   <tr height="25" style='height:15.00pt;'>
-    <td class="xl67" height="25" style='height:15.00pt;' x:str>MultiPCL (SOTA) [9]</td>
-    <td class="xl66" x:num>0.8309</td>
-    <td class="xl66" x:num>0.7978</td>
-    <td class="xl66" x:num>0.7632</td>
-    <td class="xl66" x:num>0.6744</td>
-   </tr>
-   <tr height="26" style='height:15.60pt;'>
-    <td class="xl68" height="26" style='height:15.60pt;' x:str>CPCLDetector (Ours)</td>
-    <td class="xl69" x:num>0.8382</td>
-    <td class="xl69" x:num>0.813</td>
-    <td class="xl69" x:num>0.8878</td>
-    <td class="xl69" x:num>0.7317</td>
-   </tr>
-   <![if supportMisalignedColumns]>
-    <tr width="0" style='display:none;'>
-     <td width="208" style='width:125;'></td>
-     <td width="108" style='width:65;'></td>
-     <td width="125" style='width:75;'></td>
-     <td width="102" style='width:61;'></td>
-     <td width="107" style='width:64;'></td>
-    </tr>
-   <![endif]>
-  </table>
-
-> *Improvements vs. MultiPCL: +0.73% Accuracy, +1.52% F1, +12.46% Recall, +5.73% Precision.*
-
-> *Statistical Significance: Paired t-tests show p<0.05 for Accuracy and F1.*
----
-
-### Performance on PCLMMPLUS Dataset
-
-Benefiting from expanded samples and comment data, CPCLDetector maintains strong performance:
-
-* Accuracy: 0.8603 (+2.21% vs. PCLMM)
-* F1 (macro): 0.8305
-* Recall: 0.8421 (high retention)
-* Precision: 0.6667 (acceptable, with effective noise filtering)
-* Statistical Significance: One-way ANOVA shows p<0.05 for Accuracy and F1.
-
----
-
-### Ablation Experiments (PCLMMPLUS Dataset)
-
-<table width="526" border="0" cellpadding="0" cellspacing="0" style='width:315.60pt;border-collapse:collapse;table-layout:fixed;'>
-   <col width="256" style='mso-width-source:userset;mso-width-alt:7489;'/>
-   <col width="108.00" style='mso-width-source:userset;mso-width-alt:3159;'/>
-   <col width="162" style='mso-width-source:userset;mso-width-alt:4739;'/>
-   <tr height="50" style='height:30.00pt;'>
-    <td class="xl65" height="50" width="256" style='height:30.00pt;width:153.60pt;' x:str>Model Variant</td>
-    <td class="xl66" width="108.00" style='width:64.80pt;' x:str>Accuracy</td>
-    <td class="xl66" width="162" style='width:97.20pt;' x:str>Accuracy Drop (vs. Full Model)</td>
-   </tr>
-   <tr height="25" style='height:15.00pt;'>
-    <td class="xl67" height="25" style='height:15.00pt;' x:str>Full Model (CPCLDetector)</td>
-    <td class="xl66" x:num>0.8603</td>
-    <td class="xl66" x:str>–</td>
-   </tr>
-   <tr height="50" style='height:30.00pt;'>
-    <td class="xl67" height="50" style='height:30.00pt;' x:str>Full Model – Knowledge-Enhanced Sentiment Module</td>
-    <td class="xl66" x:num>0.8469</td>
-    <td class="xl68" x:num="1.34e-002">1.34%</td>
-   </tr>
-   <tr height="50" style='height:30.00pt;'>
-    <td class="xl67" height="50" style='height:30.00pt;' x:str>Full Model – Comment Processing Module</td>
-    <td class="xl66" x:num>0.8451</td>
-    <td class="xl68" x:num="1.52e-002">1.52%</td>
-   </tr>
-   <tr height="25" style='height:15.00pt;'>
-    <td class="xl67" height="25" style='height:15.00pt;' x:str>Full Model – Both Modules</td>
-    <td class="xl66" x:num>0.8361</td>
-    <td class="xl68" x:num="2.4199999999999999e-002">2.42%</td>
-   </tr>
-   <![if supportMisalignedColumns]>
-    <tr width="0" style='display:none;'>
-     <td width="256" style='width:154;'></td>
-     <td width="108" style='width:65;'></td>
-     <td width="162" style='width:97;'></td>
-    </tr>
-   <![endif]>
-  </table>
-
-> *Statistical Significance: T-tests show p<0.05 for all ablation variants.*
----
-
-
-
-
+```text
+PCLD/
+├── README.md
+├── requirements.txt
+├── configs/pclmmplus.yaml
+├── src/
+│   ├── model.py
+│   ├── dataset.py
+│   ├── losses.py
+│   ├── metrics.py
+│   └── supporting model modules
+├── scripts/
+│   ├── train.py
+│   ├── evaluate.py
+│   ├── build_qwen_cache.py
+│   └── preprocess/
+├── splits/{train,dev,test}.txt
+├── results/reported_metrics.json
+├── tests/test_core.py
+└── data/README.md
 ```
 
----
+## Installation
+
+Python 3.10 or newer is recommended. FFmpeg is required for audio extraction.
+
+```bash
+# Download or clone the anonymous repository first
+cd PCLD
+python -m venv .venv
+source .venv/bin/activate  # Windows: .venv\Scripts\activate
+pip install -r requirements.txt
+```
+
+## Data and features
+
+Follow [data/README.md](data/README.md) to construct `data/index.csv`. Each row
+is one video and contains its label, split and paths to ASR, comments and
+pre-extracted evidence. Empty modality paths are supported and masked by the
+data loader.
+
+The included preprocessing commands are independent so their outputs can be
+cached and audited:
+
+```bash
+python scripts/preprocess/extract_audio.py --video-dir data/raw --output-dir data/wav
+python scripts/preprocess/transcribe_whisper.py --audio-dir data/wav --output-dir data/TXT
+python scripts/preprocess/extract_asr_features.py --text-dir data/TXT --output-dir features/TEXT_features
+python scripts/preprocess/extract_mfcc.py --audio-dir data/wav --output-dir features/AUDIO_features
+python scripts/preprocess/extract_vit.py --video-dir data/raw --output-dir features/VIT_features
+python scripts/preprocess/extract_face.py --video-dir data/raw --output-dir features/FACE_features --model checkpoints/fer_vt.ts
+```
+
+Build a label-free Qwen semantic cache after the ASR and comment paths have
+been added to the index:
+
+```bash
+python scripts/build_qwen_cache.py \
+  --index_csv data/index.csv \
+  --output_dir features/QWEN_SKG \
+  --output_index_csv data/index_qwen.csv \
+  --text_mode asr_comments_skg \
+  --target_column skg_cache_path
+```
+
+Set `data.index_csv` in the YAML file to the generated index. The full Qwen-SKG
+setting appends up to 16 substring-matched SKG triples to the cached text. Cache
+construction does not use labels or model predictions.
+
+## Training and evaluation
+
+Train one seed:
+
+```bash
+python scripts/train.py --config configs/pclmmplus.yaml --seed 42
+```
+
+Reproduce the five-seed protocol:
+
+```bash
+for seed in 13 21 42 87 100; do
+  python scripts/train.py --config configs/pclmmplus.yaml --seed "$seed"
+done
+```
+
+The threshold is selected using development Macro-F1, saved in the checkpoint
+and then fixed for test evaluation.
+
+```bash
+python scripts/evaluate.py \
+  --config configs/pclmmplus.yaml \
+  --checkpoint outputs/pclmmplus_full_qwen_skg/42/best.pt \
+  --split test
+```
+
+## Reported result
+
+| Model | Accuracy | Macro-F1 | Recall | Precision | AUC | PR-AUC |
+|---|---:|---:|---:|---:|---:|---:|
+| Full+Qwen-SKG | 0.8618 | **0.8497** | 0.7869 | 0.8353 | **0.9296** | 0.8922 |
+
+Values are means over seeds 13, 21, 42, 87 and 100 on the same fixed test
+split. Standard deviations and machine-readable values are available in
+[`results/reported_metrics.json`](results/reported_metrics.json). Qwen-SKG is
+best interpreted as sample-level semantic enrichment rather than proof of
+isolated symbolic graph reasoning.
+
+## Tests
+
+```bash
+python -m pytest -q
+```
+
+## Responsible use
+
+This system is intended for research and human-in-the-loop moderation, not
+autonomous surveillance, profiling or punitive decisions. CPCL examples concern
+vulnerable groups, and both false positives and false negatives can cause harm.
+Do not publish raw comments, user profiles, direct video identifiers or raw
+videos unless platform policy and informed data-governance procedures permit
+it. Prefer anonymized text and processed features.
+
+## Citation
+
+The submission is currently anonymous. Replace the placeholder below after the
+camera-ready paper is public.
+
+```bibtex
+@inproceedings{anonymous2026pcld,
+  title     = {Text-Centric Multimodal Context Modeling for Chinese Patronizing
+               and Condescending Language Detection},
+  author    = {Anonymous},
+  year      = {2026}
+}
+```

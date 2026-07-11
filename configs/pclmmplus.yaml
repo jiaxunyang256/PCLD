@@ -1,0 +1,53 @@
+seed: 42
+experiment_name: pclmmplus_full_qwen_skg
+output_root: outputs
+data:
+  index_csv: data/index.csv
+  comments_mode: all
+  max_visual_len: 64
+  max_audio_len: 8
+  max_face_len: 64
+model:
+  hidden_dim: 128
+  text_dim: 768
+  visual_dim: 768
+  audio_dim: 40
+  face_dim: 768
+  dropout: 0.1
+  use_asr: true
+  use_comments: true
+  use_text_features: true
+  use_visual: true
+  use_audio: true
+  use_face: true
+  use_knowledge: true
+  use_mamba: false
+  fusion_strategy: concat
+  max_comments: 16
+evidence_encoder:
+  type: none
+alignment:
+  method: interpolate
+  use_mmd: true
+  lambda_mmd: 0.05
+knowledge:
+  mode: lightweight
+  input_dim: 1024
+  global_skg_path: data/skg/mined_skg_chinese_with_label.json
+  max_matches: 16
+loss:
+  type: focal
+  focal_alpha: 0.75
+  focal_gamma: 2.0
+train:
+  batch_size: 8
+  epochs: 30
+  lr: 1.0e-4
+  weight_decay: 1.0e-3
+  gradient_clip: 1.0
+  patience: 5
+  selection_metric: macro_f1
+  device: cuda
+metrics:
+  threshold: 0.5
+  tune_threshold_on_dev: true
